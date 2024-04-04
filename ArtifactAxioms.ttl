@@ -1,0 +1,102 @@
+#
+# Incomplete translation of the axioms into RDF turtle
+# using bing.com's Copilot.
+#
+# Needs refinements regarding ∃ and ∃!...
+#
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema> .
+@prefix owl: <http://www.w3.org/2002/07/owl> .
+@prefix ex: <https://github.com/hannafiegen/ArtifactGFO> .
+
+# 1. ∀x Individual(x) ↔ ¬ Category(x)
+ex:Individual a owl:Class .
+ex:Category a owl:Class .
+ex:Individual owl:complementOf ex:Category .
+
+# 2. ∀xy is-instance-of(x, y) → Category(y)
+ex:is-instance-of a owl:ObjectProperty .
+ex:is-instance-of rdfs:domain ex:Individual .
+ex:is-instance-of rdfs:range ex:Category .
+
+# 3. ∀x Individual(x) → ∃y (Category(y) ∧ is-instance-of(x, y))
+ex:hasCategory a owl:ObjectProperty .
+ex:hasCategory rdfs:domain ex:Individual .
+ex:hasCategory rdfs:range ex:Category .
+
+# 4. ∀x Artifact(x) → ∃!K ArtifKind(K) ∧ is-instance-of(x, K)
+ex:Artifact a owl:Class .
+ex:ArtifKind a owl:Class .
+ex:is-instance-of a owl:ObjectProperty .
+ex:is-instance-of rdfs:domain ex:Artifact .
+ex:is-instance-of rdfs:range ex:ArtifKind .
+# TODO: add further RDF which models ∃!K
+
+# 5. ∀x Artifact(x) → ∃!d ArtifDesign(d) ∧ hasDesign(x,d)
+ex:hasDesign a owl:ObjectProperty .
+ex:hasDesign rdfs:domain ex:Artifact .
+ex:hasDesign rdfs:range ex:ArtifDesign .
+# TODO: add further RDF which models ∃!d
+
+# 6. ∀x Artifact(x) → ∃!m ArtifModel(m) ∧ hasModel(x,m)
+ex:hasModel a owl:ObjectProperty .
+ex:hasModel rdfs:domain ex:Artifact .
+ex:hasModel rdfs:range ex:ArtifModel .
+# TODO: add further RDF which models ∃!m
+
+# 7. ∀K ArtiKind(K) → ∃m ArtifModel(m)
+ex:ArtifKind ex:hasModel ex:ArtifModel .
+# TODO: probably required to model the "at least 1 m part"
+
+# 8. ∀m ArtifModel(m) → ∃d ArtifDesign(d)
+ex:ArtifModel ex:hasDesign ex:ArtifDesign .
+# TODO: probably required to model the "at least 1 m part"
+
+# 9. ∀x Artifact(x) → ∃!K ArtifKind(K) ∧ ∃y Maker(y, x) ∧ intend-To-Build (y, x, K)
+ex:Maker a owl:Class .
+ex:intend-To-Build a owl:ObjectProperty .
+ex:hasConcept a owl:ObjectProperty .
+ex:hasConcept rdfs:domain ex:Maker .
+ex:hasConcept rdfs:range ex:ConceptOf .
+# TODO: probably required to model the "at least 1 m part"
+
+# 10. ∀s Maker(s,x) ∀x Artifact(x) ∀K ArtifKind(K) ∧ intend-To-Build (s, x, K)
+#     → ∃c ConceptOf(c, K, Q) ∧ has-Concept(s, C, K, Q)
+ex:ConceptOf a owl:Class .
+ex:has-Concept a owl:ObjectProperty .
+ex:has-Concept rdfs:domain ex:Maker .
+ex:has-Concept rdfs:range ex:ConceptOf .
+# TODO: probably required to model the "at least 1 m part"
+
+# 11. ∀K ArtifKind(K) → ∃p Is-Criterial-Feature(p,K)
+ex:Is-Criterial-Feature a owl:ObjectProperty .
+ex:ArtifKind ex:Is-Criterial-Feature ex:Criterial-Feature .
+# TODO: probably required to model the "at least 1 m part"
+
+# 12. ∀K ArtifKind(K) → ∃Q Criterial-Features(Q,K) ∧ isDefinedby (K, Q)
+ex:Criterial-Feature a owl:Class .
+ex:isDefinedby a owl:ObjectProperty .
+ex:isDefinedby rdfs:domain ex:ArtifKind .
+ex:isDefinedby rdfs:range ex:Criterial-Feature .
+# TODO: probably required to model the "at least 1 m part"
+
+# 13. ∀K ArtifKind(K) →
+#       ∃s StandardDef (s, K, Q, y) ∧ ∃Q Criterial-Features(Q,K)
+#       ∧ ∃y Audienceof(y) ∧ specifiesStand(y, K, Q, s)
+ex:StandardDef a owl:ObjectProperty .
+ex:Audienceof a owl:ObjectProperty .
+ex:specifiesStand a owl:ObjectProperty .
+ex:ArtifKind ex:StandardDef ex:Standard .
+ex:ArtifKind ex:Criterial-Feature ex:Criterial-Feature .
+ex:StandardDef ex:Audienceof ex:Audience .
+ex:StandardDef ex:specifiesStand ex:Standard .
+# TODO: probably required to model the "at least 1 m part"
+
+# 14. ∀s Maker(s,x) ∀x Artifact(x) ∀K ArtifKind(K) ∧ intend-To-Build (s, x, K) →
+#       ∃p MentRepresArt(p, x, K, m,d, Q) ∧ hasMentRepresentation(s, p, x)
+ex:MentRepresArt a owl:ObjectProperty .
+ex:hasMentRepresentation a owl:ObjectProperty .
+ex:ArtifKind ex:MentRepresArt ex:MentRepres .
+ex:ArtifKind ex:Criterial-Feature ex:Criterial-Feature .
+ex:MentRepresArt ex:hasMentRepresentation ex:MentRepres .
+# TODO: probably required to model the "at least 1 m part"
