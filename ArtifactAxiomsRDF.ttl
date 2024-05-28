@@ -1,8 +1,3 @@
-#
-#
-#
-# Needs refinements regarding ∃ and ∃!...
-#
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema> .
 @prefix owl: <http://www.w3.org/2002/07/owl> .
@@ -29,35 +24,41 @@ ex:ArtifKind a owl:Class .
 ex:is-instance-of a owl:ObjectProperty .
 ex:is-instance-of rdfs:domain ex:Artifact .
 ex:is-instance-of rdfs:range ex:ArtifKind .
-# TODO: add further RDF which models ∃!K
+ex:is-instance-of a owl:FunctionalProperty .
 
 # 5. ∀x Artifact(x) → ∃!d ArtifDesign(d) ∧ hasDesign(x,d)
 ex:hasDesign a owl:ObjectProperty .
 ex:hasDesign rdfs:domain ex:Artifact .
 ex:hasDesign rdfs:range ex:ArtifDesign .
-# TODO: add further RDF which models ∃!d
+ex:hasDesign a owl:FunctionalProperty .
 
 # 6. ∀x Artifact(x) → ∃!m ArtifModel(m) ∧ hasModel(x,m)
 ex:hasModel a owl:ObjectProperty .
 ex:hasModel rdfs:domain ex:Artifact .
 ex:hasModel rdfs:range ex:ArtifModel .
-# TODO: add further RDF which models ∃!m
+ex:hasModel a owl:FunctionalProperty .
 
 # 7. ∀K ArtiKind(K) → ∃m ArtifModel(m)
-ex:ArtifKind ex:hasModel ex:ArtifModel .
-# TODO: probably required to model the "at least 1 m part"
+ex:hasModel a owl:ObjectProperty .
+ex:ArtifKind a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty ex:hasModel ;
+                      owl:someValuesFrom ex:ArtifModel ] .
 
 # 8. ∀m ArtifModel(m) → ∃d ArtifDesign(d)
-ex:ArtifModel ex:hasDesign ex:ArtifDesign .
-# TODO: probably required to model the "at least 1 m part"
+ex:hasDesign a owl:ObjectProperty .
+ex:ArtifModel a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty ex:hasDesign ;
+                      owl:someValuesFrom ex:ArtifDesign ] .
 
 # 9. ∀x Artifact(x) → ∃!K ArtifKind(K) ∧ ∃y Maker(y, x) ∧ intend-To-Build (y, x, K)
 ex:Maker a owl:Class .
-ex:intend-To-Build a owl:ObjectProperty .
+ex:intend-To-Build a owl:ObjectProperty ;
+                   owl:FunctionalProperty .
 ex:hasConcept a owl:ObjectProperty .
 ex:hasConcept rdfs:domain ex:Maker .
 ex:hasConcept rdfs:range ex:ConceptOf .
-# TODO: probably required to model the "at least 1 m part"
 
 # 10. ∀s Maker(s,x) ∀x Artifact(x) ∀K ArtifKind(K) ∧ intend-To-Build (s, x, K)
 #     → ∃c ConceptOf(c, K, Q) ∧ has-Concept(s, C, K, Q)
@@ -65,19 +66,27 @@ ex:ConceptOf a owl:Class .
 ex:has-Concept a owl:ObjectProperty .
 ex:has-Concept rdfs:domain ex:Maker .
 ex:has-Concept rdfs:range ex:ConceptOf .
-# TODO: probably required to model the "at least 1 m part"
+ex:Maker a owl:Class ;
+         rdfs:subClassOf [ a owl:Restriction ;
+                           owl:onProperty ex:has-Concept ;
+                           owl:someValuesFrom ex:ConceptOf ] .
 
 # 11. ∀K ArtifKind(K) → ∃p Is-Criterial-Feature(p,K)
 ex:Is-Criterial-Feature a owl:ObjectProperty .
-ex:ArtifKind ex:Is-Criterial-Feature ex:Criterial-Feature .
-# TODO: probably required to model the "at least 1 m part"
+ex:ArtifKind a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty ex:Is-Criterial-Feature ;
+                      owl:someValuesFrom ex:Criterial-Feature ] .
 
 # 12. ∀K ArtifKind(K) → ∃Q Criterial-Features(Q,K) ∧ isDefinedby (K, Q)
 ex:Criterial-Feature a owl:Class .
 ex:isDefinedby a owl:ObjectProperty .
 ex:isDefinedby rdfs:domain ex:ArtifKind .
 ex:isDefinedby rdfs:range ex:Criterial-Feature .
-# TODO: probably required to model the "at least 1 m part"
+ex:ArtifKind a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty ex:isDefinedby ;
+                      owl:someValuesFrom ex:Criterial-Feature ] .
 
 # 13. ∀K ArtifKind(K) →
 #       ∃s StandardDef (s, K, Q, y) ∧ ∃Q Criterial-Features(Q,K)
@@ -85,9 +94,21 @@ ex:isDefinedby rdfs:range ex:Criterial-Feature .
 ex:StandardDef a owl:ObjectProperty .
 ex:Audienceof a owl:ObjectProperty .
 ex:specifiesStand a owl:ObjectProperty .
-ex:ArtifKind ex:StandardDef ex:Standard .
-ex:ArtifKind ex:Criterial-Feature ex:Criterial-Feature .
-ex:StandardDef ex:Audienceof ex:Audience .
-ex:StandardDef ex:specifiesStand ex:Standard .
-# TODO: probably required to model the "at least 1 m part"
-
+ex:ArtifKind ex:StandardDef ex:Standard ;
+            ex:Criterial-Feature ex:Criterial-Feature .
+ex:StandardDef ex:Audienceof ex:Audience ;
+              ex:specifiesStand ex:Standard .
+ex:ArtifKind a owl:Class ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty ex:StandardDef ;
+                      owl:someValuesFrom ex:Standard ] ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty ex:Criterial-Feature ;
+                      owl:someValuesFrom ex:Criterial-Feature ] ;
+    rdfs:subClassOf [ a owl:Restriction ;
+                      owl:onProperty ex:specifiesStand ;
+                      owl:someValuesFrom ex:Standard ] .
+ex:Standard a owl:Class ;
+            rdfs:subClassOf [ a owl:Restriction ;
+                              owl:onProperty ex:Audienceof ;
+                              owl:someValuesFrom ex:Audience ] .
