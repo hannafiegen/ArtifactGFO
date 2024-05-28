@@ -11,4 +11,4 @@
 (11.) ∀K ArtifKind(K) → ∃p Is-Criterial-Feature(p,K) 
 (12.) ∀K ArtifKind(K) → ∃Q Criterial-Features(Q,K) ∧ isDefinedby (K, Q)
 (13.) ∀K ArtifKind(K) → ∃s StandardDef (s, K, Q, y) ∧ ∃Q Criterial-Features(Q,K) ∧ ∃y Audienceof(y) ∧ specifiesStand(y, K, Q, s)
-(14.) ∀s Maker(s,x) ∀x Artifact(x) ∀K ArtifKind(K) ∧ intend-To-Build (s, x, K)→ ∃p MentRepresArt(p, x, K, m,d, Q) ∧ hasMentRepresentation(s, p, x) 
+
