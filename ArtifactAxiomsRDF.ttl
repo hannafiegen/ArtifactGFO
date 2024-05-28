@@ -1,6 +1,5 @@
 #
-# Incomplete translation of the axioms into RDF turtle
-# using bing.com's Copilot.
+#
 #
 # Needs refinements regarding ∃ and ∃!...
 #
@@ -92,11 +91,3 @@ ex:StandardDef ex:Audienceof ex:Audience .
 ex:StandardDef ex:specifiesStand ex:Standard .
 # TODO: probably required to model the "at least 1 m part"
 
-# 14. ∀s Maker(s,x) ∀x Artifact(x) ∀K ArtifKind(K) ∧ intend-To-Build (s, x, K) →
-#       ∃p MentRepresArt(p, x, K, m,d, Q) ∧ hasMentRepresentation(s, p, x)
-ex:MentRepresArt a owl:ObjectProperty .
-ex:hasMentRepresentation a owl:ObjectProperty .
-ex:ArtifKind ex:MentRepresArt ex:MentRepres .
-ex:ArtifKind ex:Criterial-Feature ex:Criterial-Feature .
-ex:MentRepresArt ex:hasMentRepresentation ex:MentRepres .
-# TODO: probably required to model the "at least 1 m part"
